@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import SearchInput from "@/components/SearchInput";
 import MemoryGrid from "@/components/MemoryGrid";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
-
+import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 // Mock data - replace with real data from your backend
 const mockMemories = [
   {
@@ -38,7 +38,8 @@ const mockMemories = [
     id: "4",
     type: "twitter" as const,
     title: "AI Breakthrough Announcement",
-    description: "Major advancement in artificial intelligence research announced today.",
+    description:
+      "Major advancement in artificial intelligence research announced today.",
     url: "#",
   },
 ];
@@ -51,12 +52,12 @@ const HomePage = () => {
 
   useEffect(() => {
     // Set dark mode by default
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.add("dark");
   }, []);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle("dark");
   };
 
   const handleSearch = async (query: string) => {
@@ -84,10 +85,20 @@ const HomePage = () => {
     <div className="min-h-screen bg-background relative">
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-grid-pattern dark:bg-grid-pattern-dark opacity-[0.3] dark:opacity-[0.2] pointer-events-none" />
-      
+
       {/* Content with relative positioning to appear above grid */}
       <div className="relative">
-        <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+        <div className=" fixed top-4 right-4  flex justify-between items-center">
+          <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+          <div className="flex items-center gap-2 bg-card hover:bg-accent transition-colors duration-200 shadow-xl dark:bg-gray-800/50 dark:border dark:border-gray-700 p-1 rounded-full">
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+          </div>
+        </div>
         <div className="container px-4 py-16">
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold mb-4 animate-fade-down font-inter">
@@ -100,7 +111,11 @@ const HomePage = () => {
 
           <SearchInput onSearch={handleSearch} />
 
-          <div className={`transition-opacity duration-500 ${isSearching ? "opacity-50" : ""}`}>
+          <div
+            className={`transition-opacity duration-500 ${
+              isSearching ? "opacity-50" : ""
+            }`}
+          >
             <MemoryGrid memories={memories} />
           </div>
         </div>
@@ -109,4 +124,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;
